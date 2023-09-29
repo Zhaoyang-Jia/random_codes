@@ -1,14 +1,18 @@
 import os
 
 file_directory = '/nucleus/projects/globus_endpoint/monje_fastqs'
-output_filename_path = '/nucleus/projects/monje/filenames.txt'
+output_filename_path = '/nucleus/projects/monje/origin_filenames.txt'
 section_info = []
 header_names = set()
+id_index = 2
+s_index = 3
+lane_index = 4
+read_index = 5
 
 for filename in os.listdir(file_directory):
     if filename.endswith('.fastq.gz'):
         parts = filename.split('_')
-        header_names.add(parts[0])
+        header_names.add(parts[id_index])
 
 for header in header_names:
     r1l1 = "None"
@@ -19,15 +23,15 @@ for header in header_names:
     for filename in os.listdir(file_directory):
         if filename.endswith('.fastq.gz'):
             parts = filename.split('_')
-            if parts[0] == header:
-                sample_ID = parts[0] + '_' + parts[1]
-                if parts[2] == 'L001' and parts[3] == 'R1':
+            if parts[id_index] == header:
+                sample_ID = parts[id_index] + '_' + parts[s_index]
+                if parts[lane_index] == 'L001' and parts[read_index] == 'R1':
                     r1l1 = filename
-                elif parts[2] == 'L002' and parts[3] == 'R1':
+                elif parts[lane_index] == 'L002' and parts[read_index] == 'R1':
                     r1l2 = filename
-                elif parts[2] == 'L001' and parts[3] == 'R2':
+                elif parts[lane_index] == 'L001' and parts[read_index] == 'R2':
                     r2l1 = filename
-                elif parts[2] == 'L002' and parts[3] == 'R2':
+                elif parts[lane_index] == 'L002' and parts[read_index] == 'R2':
                     r2l2 = filename
     section_info.append(tuple([header, r1l1, r1l2, sample_ID + "_R1.fastq.gz"]))
     section_info.append(tuple([header, r2l1, r2l2, sample_ID + "_R2.fastq.gz"]))
